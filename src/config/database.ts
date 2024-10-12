@@ -1,27 +1,47 @@
+import { Sequelize, Dialect } from 'sequelize';
 import dotenv from 'dotenv';
-
 dotenv.config();
 
-module.exports = {
+type Environment = 'development' | 'test' | 'production';
+
+const env: Environment = process.env.NODE_ENV as Environment || 'development';
+
+const databaseConfig = {
   development: {
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    database: process.env.DB_NAME_DEV as string,
+    username: process.env.DB_USERNAME as string,
+    password: process.env.DB_PASSWORD as string,
     host: process.env.DB_HOST,
-    dialect: 'postgres',
+    dialect: 'postgres' as String
   },
   test: {
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME_TEST,
+    database: process.env.DB_NAME_TEST as string,
+    username: process.env.DB_USERNAME as string,
+    password: process.env.DB_PASSWORD as string,
     host: process.env.DB_HOST,
-    dialect: 'postgres',
+    dialect: 'postgres' as String
   },
   production: {
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    database: process.env.DB_NAME_PROD as string,
+    username: process.env.DB_USERNAME as string,
+    password: process.env.DB_PASSWORD as string,
     host: process.env.DB_HOST,
-    dialect: 'postgres',
+    dialect: 'postgres' as String
   },
 };
+
+const currentConfig = databaseConfig[env];
+
+console.log('Current Config:', currentConfig);
+
+const sequelize = new Sequelize(
+  currentConfig.database,
+  currentConfig.username,
+  currentConfig.password,
+  {
+    host: currentConfig.host,
+    dialect: currentConfig.dialect as Dialect,
+  }
+);
+
+export default sequelize;
