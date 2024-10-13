@@ -69,3 +69,97 @@ export const deleteText = async (req: Request, res: Response) => {
   }
 };
 
+export const getWordCount = async (req: Request, res: Response) => {
+  try {
+    const text = await Text.findByPk(req.params.id);
+    if (text) {
+      const wordCount = text.content.split(/\s+/).length;
+      res.status(200).json({ word_count: wordCount });
+    } else {
+      res.status(404).json({ error: 'Text not found' });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Failed to get number of words' });
+  }
+};
+
+export const getCharacterCount = async (req: Request, res: Response) => {
+    try {
+        const text = await Text.findByPk(req.params.id);
+        if (text) {
+            const characterCount = text.content.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()\s]/g, '').length;
+            res.status(200).json({ character_count: characterCount });
+        } else {
+      res.status(404).json({ error: 'Text not found' });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Failed to get number of characters' });
+  }
+};
+
+export const getSentenceCount = async (req: Request, res: Response) => {
+    try {
+        const text = await Text.findByPk(req.params.id);
+        if (text) {
+            const splitText = text.content.split(/[.!?]+/g);
+            let sentenceCount = 0;
+            for(let sentence of splitText) {
+                if (sentence.trim() !== '') {
+                    sentenceCount++;
+                }
+            }
+            res.status(200).json({ sentence_count: sentenceCount });
+        } else {
+            res.status(404).json({ error: 'Text not found' });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const getParagraphCount = async (req: Request, res: Response) => {
+    try {
+        const text = await Text.findByPk(req.params.id);
+        if (text) {
+            const paragraphCount = text.content.split(/\n/).length;
+            res.status(200).json({ paragraph_count: paragraphCount });
+        } else {
+            res.status(404).json({ error: 'Text not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Failed to get number of paragraphs' });
+    }
+
+};
+
+export const getLongestWordsInParagraphs = async (req: Request, res: Response) => {
+    try {
+      const text = await Text.findByPk(req.params.id);
+      if (text) {
+        let paragraphs = text.content.split(/\n/).map((paragraph, index) => ({paragraph_no: index, content: paragraph, longest_word: ""}));
+        
+        for(let paragraph of paragraphs) {
+            const words = paragraph.content.split(/\s+/);
+            
+            for(let word of words) {
+                const cleanWord = word.replace(/[^\w]/g, '');
+                if (cleanWord.length > paragraph.longest_word.length) {
+                    paragraph.longest_word = cleanWord;
+                }
+            }
+        }
+  
+        res.status(200).json({ paragraphs });
+      } else {
+        res.status(404).json({ error: 'Text not found' });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Failed to get longest words in paragraphs' });
+    }
+  };
+
+
