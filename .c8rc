@@ -1,0 +1,6 @@
+{
+  "all": true,
+  "reporter": ["text", "html"],
+  "reporter-output": "coverage",
+  "src": ["src"]
+}

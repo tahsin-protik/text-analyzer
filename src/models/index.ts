@@ -1,9 +1,10 @@
 import sequelize from '../config/database';
 import Test from './test';
+import Text from './text';
 
-// Register models
 const models = {
-  Test
+  Test,
+  Text
 };
 
 

@@ -1,6 +1,14 @@
 import sequelize from './database';
+import Text from '../models/text';
 import '../models';
 
-sequelize.sync()
-  .then(() => console.log('Database synchronized'))
-  .catch(err => console.error('Error synchronizing database:', err));
+const syncDatabase = async () => {
+  try {
+    await sequelize.sync({ force: false }); // Set to true only for development
+    console.log('Database synced');
+  } catch (error) {
+    console.error('Failed to sync database:', error);
+  }
+};
+
+export default syncDatabase;
